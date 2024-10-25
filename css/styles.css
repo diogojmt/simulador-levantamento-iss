@@ -1,0 +1,75 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 90%;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;  /* Adicionado para permitir rolagem horizontal se necessário */
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px; /* Ajustar o tamanho da fonte para a tabela */
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 5px;
+    text-align: center;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+
+/* Ajustes para centralizar botões e inputs */
+td div {
+    display: flex;
+    justify-content: center;  /* Centraliza horizontalmente */
+    align-items: center;      /* Centraliza verticalmente */
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button#add-row {
+    margin-top: 20px; /* Espaçamento acima */
+    margin-bottom: 20px; /* Espaçamento abaixo */
+}
+
+input {
+    width: 80px;
+    padding: 5px;
+    text-align: center;
+}
+
+select.ctiss-apurado {
+    height: 30px; /* Ajuste a altura conforme necessário */
+    padding: 5px; /* Adiciona um pouco de padding */
+    font-size: 14px; /* Ajusta o tamanho da fonte */
+    text-align: center; /* Centraliza o texto */
+}
