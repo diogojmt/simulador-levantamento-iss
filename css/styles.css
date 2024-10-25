@@ -20,6 +20,13 @@ h2 {
     margin-bottom: 20px;
 }
 
+.subtitle {
+    font-size: 1.2em; /* Tamanho de fonte um pouco menor */
+    font-weight: bold; /* Deixa o subtítulo em negrito */
+    margin-top: -10px; /* Ajuste para espaçamento se necessário */
+    color: #666; /* Opcional: uma cor mais suave */
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
