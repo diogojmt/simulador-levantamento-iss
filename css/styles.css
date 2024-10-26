@@ -9,10 +9,10 @@ body {
     max-width: 90%;
     margin: 0 auto;
     background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    overflow-x: auto;  /* Adicionado para permitir rolagem horizontal se necessário */
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Sombra mais definida */
+    overflow-x: auto;  /* Permite rolagem horizontal se necessário */
 }
 
 h2 {
@@ -24,7 +24,7 @@ h2 {
     font-size: 1.2em; /* Tamanho de fonte um pouco menor */
     font-weight: bold; /* Deixa o subtítulo em negrito */
     margin-top: -10px; /* Ajuste para espaçamento se necessário */
-    color: #666; /* Opcional: uma cor mais suave */
+    color: #666; /* Cor mais suave */
 }
 
 table {
@@ -35,7 +35,7 @@ table {
 
 th, td {
     border: 1px solid #ccc;
-    padding: 5px;
+    padding: 8px; /* Espaçamento maior para legibilidade */
     text-align: center;
 }
 
@@ -43,13 +43,61 @@ th {
     background-color: #f0f0f0;
 }
 
-/* Ajustes para centralizar botões e inputs */
-td div {
+/* Wrapper do campo de entrada e botão de replicação */
+.input-wrapper {
     display: flex;
-    justify-content: center;  /* Centraliza horizontalmente */
-    align-items: center;      /* Centraliza verticalmente */
+    align-items: center;
+    position: relative;
 }
 
+.input-wrapper input {
+    flex: 1;
+    padding-right: 24px; /* Espaço para o ícone à direita */
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+/* Ajuste de posição para o botão de replicação à direita */
+.replicate-btn {
+    position: absolute;
+    right: 5px; /* Posição à direita dentro do campo */
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #4CAF50; /* Cor que combina com o tema */
+    font-size: 16px; /* Tamanho do ícone */
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+}
+
+.replicate-btn:hover {
+    color: #2e7d32; /* Cor um pouco mais escura para hover */
+}
+
+.replicate-btn:focus {
+    outline: none;
+}
+
+/* Estilo do botão Adicionar Linha */
+button#add-row {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    margin: 20px auto; /* Centralizar o botão */
+}
+
+button#add-row:hover {
+    background-color: #45a049;
+}
+
+/* Estilo geral de botões */
 button {
     padding: 10px 15px;
     background-color: #4CAF50;
@@ -63,20 +111,40 @@ button:hover {
     background-color: #45a049;
 }
 
-button#add-row {
-    margin-top: 20px; /* Espaçamento acima */
-    margin-bottom: 20px; /* Espaçamento abaixo */
-}
-
+/* Estilo para campos de entrada */
 input {
     width: 80px;
     padding: 5px;
     text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 3px;
 }
 
+input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Estilo para selects */
 select.ctiss-apurado {
-    height: 30px; /* Ajuste a altura conforme necessário */
-    padding: 5px; /* Adiciona um pouco de padding */
-    font-size: 14px; /* Ajusta o tamanho da fonte */
-    text-align: center; /* Centraliza o texto */
+    height: 30px;
+    padding: 5px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    text-align: center;
+}
+
+select.ctiss-apurado:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Estilo para quando houver um erro */
+input.error, select.error {
+    border-color: #e74c3c;
+}
+
+input.error:focus, select.error:focus {
+    border-color: #c0392b;
 }

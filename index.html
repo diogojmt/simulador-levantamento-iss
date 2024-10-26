@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quadro de Levantamento Fiscal</title>
     <link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
     <div class="container">
         <h2>Simulação - Quadro de Levantamento Fiscal - ISS</h2>
-		<h3 class="subtitle">Quadro Geral Resumido</h3>
+        <h3 class="subtitle">Quadro Geral Resumido</h3>
         <table>
             <thead>
                 <tr>
@@ -23,7 +25,7 @@
                     <th>G</th>
                     <th>H</th>
                     <th>I = F - (G + H)</th>
-                    <th colspan="5" style="text-align: center; font-size: 18px; background-color: #f0f0f0;">Consolidação do Cálculo</th> <!-- Título mesclado -->
+                    <th colspan="5" style="text-align: center; font-size: 18px; background-color: #f0f0f0;">Consolidação do Cálculo</th>
                 </tr>
                 <tr>
                     <th>Período de Apuração</th>
@@ -40,23 +42,23 @@
                     <th>ISS Recolhido / ISS Declarado</th>
                     <th>Diferença a Recolher</th>
                     <th>Ações</th>
-                    <th>Diferença Atualizada</th> <!-- Nova coluna -->
-                    <th>Multa de Mora</th> <!-- Antigo Juros de Mora -->
-                    <th>Juros de Mora</th> <!-- Antiga Multa de Mora -->
-                    <th>Dif. Total a Recolher</th> <!-- Nova coluna -->
+                    <th>Diferença Atualizada</th>
+                    <th>Multa de Mora</th>
+                    <th>Juros de Mora</th>
+                    <th>Dif. Total a Recolher</th>
                 </tr>
             </thead>
             <tbody id="fiscal-table">
-                <!-- Linhas de dados serão geradas aqui -->
+                <!-- Linhas de dados serão geradas aqui dinamicamente pelo JavaScript -->
             </tbody>
             <tfoot>
                 <tr id="total-row">
-					<td colspan="14" style="text-align: right; font-weight: bold;">Total:</td>
-					<td><input type="number" id="total-diferenca-atualizada" disabled value="0.00"></td>
-					<td><input type="number" id="total-juros-mora" disabled value="0.00"></td>
-					<td><input type="number" id="total-multa-mora" disabled value="0.00"></td>
-					<td><input type="number" id="total-dif-total-recolher" disabled value="0.00"></td>
-				</tr>
+                    <td colspan="14" style="text-align: right; font-weight: bold;">Total:</td>
+                    <td><input type="number" id="total-diferenca-atualizada" disabled value="0.00"></td>
+                    <td><input type="number" id="total-juros-mora" disabled value="0.00"></td>
+                    <td><input type="number" id="total-multa-mora" disabled value="0.00"></td>
+                    <td><input type="number" id="total-dif-total-recolher" disabled value="0.00"></td>
+                </tr>
             </tfoot>
         </table>
         <button id="add-row">Adicionar Linha à Simulação</button>
