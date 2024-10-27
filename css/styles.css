@@ -11,8 +11,8 @@ body {
     background-color: #fff;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Sombra mais definida */
-    overflow-x: auto;  /* Permite rolagem horizontal se necessário */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
 }
 
 h2 {
@@ -21,21 +21,78 @@ h2 {
 }
 
 .subtitle {
-    font-size: 1.2em; /* Tamanho de fonte um pouco menor */
-    font-weight: bold; /* Deixa o subtítulo em negrito */
-    margin-top: -10px; /* Ajuste para espaçamento se necessário */
-    color: #666; /* Cor mais suave */
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-top: -10px;
+    color: #666;
+}
+
+/* Container dos campos de Período e botão Iniciar Simulação */
+.period-inputs-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.period-inputs {
+    display: flex;
+    gap: 20px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.input-group input[type="text"] {
+    width: 180px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.input-group input[type="text"]::placeholder {
+    color: #aaa;
+    font-size: 12px;
+}
+
+/* Estilo para o botão Iniciar Simulação */
+#iniciar-simulacao {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    height: fit-content;
+    margin-top: 20px;
+}
+
+#iniciar-simulacao:hover {
+    background-color: #45a049;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px; /* Ajustar o tamanho da fonte para a tabela */
+    font-size: 14px;
 }
 
 th, td {
     border: 1px solid #ccc;
-    padding: 8px; /* Espaçamento maior para legibilidade */
+    padding: 8px;
     text-align: center;
 }
 
@@ -52,35 +109,29 @@ th {
 
 .input-wrapper input {
     flex: 1;
-    padding-right: 24px; /* Espaço para o ícone à direita */
+    padding-right: 24px;
     text-align: center;
     border: 1px solid #ddd;
     border-radius: 3px;
 }
 
-/* Ajuste de posição para o botão de replicação à direita */
 .replicate-btn {
     position: absolute;
-    right: 5px; /* Posição à direita dentro do campo */
+    right: 5px;
     background: none;
     border: none;
     cursor: pointer;
-    color: #4CAF50; /* Cor que combina com o tema */
-    font-size: 16px; /* Tamanho do ícone */
+    color: #4CAF50;
+    font-size: 16px;
     padding: 0;
     display: inline-flex;
     align-items: center;
 }
 
 .replicate-btn:hover {
-    color: #2e7d32; /* Cor um pouco mais escura para hover */
+    color: #2e7d32;
 }
 
-.replicate-btn:focus {
-    outline: none;
-}
-
-/* Estilo do botão Adicionar Linha */
 button#add-row {
     background-color: #4CAF50;
     color: white;
@@ -90,7 +141,7 @@ button#add-row {
     cursor: pointer;
     font-size: 16px;
     display: block;
-    margin: 20px auto; /* Centralizar o botão */
+    margin: 20px auto;
 }
 
 button#add-row:hover {

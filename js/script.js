@@ -14,6 +14,189 @@ const ipca = {
     "2024": { "jan": 0.42, "fev": 0.83, "mar": 0.16, "abr": 0.38, "mai": 0.46, "jun": 0.21, "jul": 0.38, "ago": -0.02, "set": 0.44 }
 };
 
+// Função para inicializar os campos com o Flatpickr e o plugin de seleção de mês
+function initializeDatePickers() {
+    flatpickr("#periodo-apuracao-inicial", {
+        plugins: [
+            new monthSelectPlugin({
+                shorthand: true,          // Exibe abreviações de mês (ex: "Jan", "Feb")
+                dateFormat: "m/Y",        // Formato de exibição (ex: "01/2023")
+                altFormat: "F Y"          // Formato alternativo para leitura (ex: "Janeiro 2023")
+            })
+        ],
+        allowInput: true  // Permite que o usuário digite manualmente, se desejar
+    });
+
+    flatpickr("#periodo-apuracao-final", {
+        plugins: [
+            new monthSelectPlugin({
+                shorthand: true,
+                dateFormat: "m/Y",
+                altFormat: "F Y"
+            })
+        ],
+        allowInput: true
+    });
+}
+
+// Chame a função para inicializar os campos ao carregar a página
+document.addEventListener("DOMContentLoaded", initializeDatePickers);
+
+// Função para gerar períodos de apuração com base em um intervalo de datas
+function generatePeriods(start, end) {
+    const periods = [];
+    let [startMonth, startYear] = start.split('/').map(Number);
+    let [endMonth, endYear] = end.split('/').map(Number);
+
+    // Adiciona cada mês ao array até alcançar o mês final
+    while (startYear < endYear || (startYear === endYear && startMonth <= endMonth)) {
+        const period = `${String(startMonth).padStart(2, '0')}/${startYear}`;
+        periods.push(period);
+        
+        // Avança para o próximo mês
+        startMonth++;
+        if (startMonth > 12) {
+            startMonth = 1;
+            startYear++;
+        }
+    }
+
+    return periods;
+}
+
+
+// Função para adicionar uma linha com um período específico
+function addRowWithPeriod(period) {
+    const table = document.getElementById('fiscal-table');
+    const row = document.createElement('tr');
+
+    // Gera valores aleatórios para outras colunas ou mantenha o campo vazio para o usuário preencher
+    const itemCTISS = generateCTISS();
+    const baseCalculoDeclarada = generateBaseCalculo();
+    const issRecolhido = (parseFloat(baseCalculoDeclarada) * 0.05).toFixed(2);
+
+    // Criação da linha com o campo "Período de Apuração" incluindo name="periodo-apuracao"
+    row.innerHTML = `
+        <td><input type="text" name="periodo-apuracao" value="${period}" disabled></td>
+        <td><input type="text" value="${itemCTISS}" disabled></td>
+        <td><input type="number" class="base-calculo-declarada" value="${baseCalculoDeclarada}" step="0.01" disabled></td>
+        <td>
+            <select class="ctiss-apurado">
+                <option value=""></option>
+                <option value="0702-0/01">0702-0/01</option>
+                <option value="0702-0/02">0702-0/02</option>
+                <option value="0702-0/03">0702-0/03</option>
+                <option value="0702-0/04">0702-0/04</option>
+            </select>
+        </td>
+        <td><input type="number" class="receita-apurada" step="0.01" value="0.00"></td>
+        <td><input type="number" class="iss-retido" step="0.01" value="0.00"></td>
+        <td><input type="number" class="deducoes" step="0.01" value="0.00"></td>
+        <td><input type="number" class="base-calculo" disabled></td>
+        <td><input type="number" class="aliquota" min="2" max="5" step="0.01" value="5.00"></td>
+        <td><input type="number" class="valor-devido" disabled></td>
+        <td><input type="number" class="iss-compensado" step="0.01" value="0.00"></td>
+        <td><input type="number" class="iss-recolhido" value="${issRecolhido}" disabled></td>
+        <td><input type="number" class="diferenca-recolher" disabled></td>
+        <td><button class="same-period-row">+</button></td>
+        <td><input type="number" class="diferenca-atualizada" disabled value="0.00"></td>
+        <td><input type="number" class="juros-mora" disabled value="0.00"></td>
+        <td><input type="number" class="multa-mora" disabled value="0.00"></td>
+        <td><input type="number" class="dif-total-recolher" disabled value="0.00"></td>
+    `;
+
+    table.appendChild(row);
+
+    // Adiciona os eventos de cálculo e replicação à nova linha
+    addCalculationListenersToRow(row);
+    addSamePeriodFunctionalityToRow(row);
+    addRemoveRowFunctionalityToRow(row);
+
+    // Atualiza os totalizadores para garantir que todos os valores estão corretos após a nova linha
+    updateTotalizers();
+
+    // Debug: Verifique se o campo está corretamente configurado
+    const periodoApuracaoInput = row.querySelector('input[name="periodo-apuracao"]');
+    if (!periodoApuracaoInput) {
+        console.error("Campo 'Período de Apuração' não encontrado na linha recém-criada.");
+    } else {
+        console.log("Campo 'Período de Apuração' encontrado:", periodoApuracaoInput.value);
+    }
+}
+
+// Verificação no evento de input para evitar erros em campos nulos
+function addCalculationListenersToRow(row) {
+    const inputs = row.querySelectorAll('.base-calculo-declarada, .receita-apurada, .iss-retido, .deducoes, .aliquota, .iss-compensado');
+    
+    inputs.forEach(input => {
+        input.addEventListener('input', function () {
+            const currentRow = input.closest('tr');
+            
+            // Acessa os campos somente se eles existirem na linha
+            const receitaApurada = currentRow.querySelector('.receita-apurada') ? parseFloat(currentRow.querySelector('.receita-apurada').value) || 0 : 0;
+            const issRetido = currentRow.querySelector('.iss-retido') ? parseFloat(currentRow.querySelector('.iss-retido').value) || 0 : 0;
+            const deducoes = currentRow.querySelector('.deducoes') ? parseFloat(currentRow.querySelector('.deducoes').value) || 0 : 0;
+            const aliquota = currentRow.querySelector('.aliquota') ? parseFloat(currentRow.querySelector('.aliquota').value) || 0 : 0;
+            const issCompensado = currentRow.querySelector('.iss-compensado') ? parseFloat(currentRow.querySelector('.iss-compensado').value) || 0 : 0;
+
+            const baseCalculo = receitaApurada - (issRetido + deducoes);
+            const baseCalculoEl = currentRow.querySelector('.base-calculo');
+            if (baseCalculoEl) baseCalculoEl.value = baseCalculo.toFixed(2);
+
+            const valorDevido = baseCalculo * (aliquota / 100);
+            const valorDevidoEl = currentRow.querySelector('.valor-devido');
+            if (valorDevidoEl) valorDevidoEl.value = valorDevido.toFixed(2);
+
+            const issRecolhidoEl = currentRow.querySelector('.iss-recolhido');
+            const issRecolhido = issRecolhidoEl ? parseFloat(issRecolhidoEl.value) || 0 : 0;
+            const diferencaRecolher = valorDevido - (issCompensado + issRecolhido);
+            const diferencaRecolherEl = currentRow.querySelector('.diferenca-recolher');
+            if (diferencaRecolherEl) diferencaRecolherEl.value = diferencaRecolher.toFixed(2);
+
+            const periodoApuracaoEl = currentRow.querySelector('td:nth-child(1) input');
+            const periodoApuracao = periodoApuracaoEl ? periodoApuracaoEl.value : '';
+            const diferencaAtualizada = applyIPCA(diferencaRecolher, periodoApuracao);
+            const diferencaAtualizadaEl = currentRow.querySelector('.diferenca-atualizada');
+            if (diferencaAtualizadaEl) diferencaAtualizadaEl.value = diferencaAtualizada.toFixed(2);
+
+            const jurosMora = calcularJurosMora(diferencaAtualizada, periodoApuracao);
+            const jurosMoraEl = currentRow.querySelector('.juros-mora');
+            if (jurosMoraEl) jurosMoraEl.value = jurosMora.toFixed(2);
+
+            const multaMora = calcularMultaMora(diferencaAtualizada, periodoApuracao);
+            const multaMoraEl = currentRow.querySelector('.multa-mora');
+            if (multaMoraEl) multaMoraEl.value = multaMora.toFixed(2);
+
+            const difTotalRecolher = diferencaAtualizada + multaMora + jurosMora;
+            const difTotalRecolherEl = currentRow.querySelector('.dif-total-recolher');
+            if (difTotalRecolherEl) difTotalRecolherEl.value = difTotalRecolher.toFixed(2);
+
+            // Atualiza os totalizadores após cada alteração
+            updateTotalizers();
+        });
+    });
+}
+
+
+// Função para iniciar a simulação com o intervalo de períodos, verificando os inputs
+function iniciarSimulacao() {
+    const startPeriod = document.getElementById('periodo-apuracao-inicial').value;
+    const endPeriod = document.getElementById('periodo-apuracao-final').value;
+
+    // Validação simples para checar se o período final é menor que o inicial
+    if (new Date(`01/${startPeriod}`) > new Date(`01/${endPeriod}`)) {
+        alert("Período Final não pode ser menor que o Período Inicial.");
+        return;
+    }
+
+    // Gera os períodos no intervalo e adiciona uma linha para cada período
+    let currentPeriod = startPeriod;
+    while (currentPeriod <= endPeriod) {
+        addRowWithPeriod(currentPeriod);
+        currentPeriod = getNextPeriod(currentPeriod);
+    }
+}
+
 // Função para calcular a diferença atualizada
 function applyIPCA(diferenca, periodoApuracao) {
     const [mesInicial, anoInicial] = periodoApuracao.split('/');
@@ -85,8 +268,8 @@ function calcularMultaMora(diferencaAtualizada, periodoApuracao) {
 // Função para calcular o próximo período de apuração
 function getNextPeriod(period) {
     let [month, year] = period.split('/');
-    month = parseInt(month);
-    year = parseInt(year);
+    month = parseInt(month, 10);
+    year = parseInt(year, 10);
 
     if (month === 12) {
         month = 1;
@@ -95,10 +278,10 @@ function getNextPeriod(period) {
         month += 1;
     }
 
-    return `${month.toString().padStart(2, '0')}/${year}`;
+    return `${String(month).padStart(2, '0')}/${year}`;
 }
 
-// Função para atualizar os totalizadores
+// Ajuste nos cálculos para checar se os elementos existem antes de acessar seus valores
 function updateTotalizers() {
     const table = document.getElementById('fiscal-table');
     const rows = table.querySelectorAll('tr');
@@ -109,10 +292,11 @@ function updateTotalizers() {
     let totalDifTotalRecolher = 0;
 
     rows.forEach(row => {
-        const diferencaAtualizada = parseFloat(row.querySelector('.diferenca-atualizada')?.value) || 0;
-        const multaMora = parseFloat(row.querySelector('.multa-mora')?.value) || 0;
-        const jurosMora = parseFloat(row.querySelector('.juros-mora')?.value) || 0;
-        const difTotalRecolher = parseFloat(row.querySelector('.dif-total-recolher')?.value) || 0;
+        // Usa valor 0 caso o elemento seja null ou undefined
+        const diferencaAtualizada = row.querySelector('.diferenca-atualizada')?.value ? parseFloat(row.querySelector('.diferenca-atualizada').value) : 0;
+        const multaMora = row.querySelector('.multa-mora')?.value ? parseFloat(row.querySelector('.multa-mora').value) : 0;
+        const jurosMora = row.querySelector('.juros-mora')?.value ? parseFloat(row.querySelector('.juros-mora').value) : 0;
+        const difTotalRecolher = row.querySelector('.dif-total-recolher')?.value ? parseFloat(row.querySelector('.dif-total-recolher').value) : 0;
 
         totalDiferencaAtualizada += diferencaAtualizada;
         totalMultaMora += multaMora;
@@ -201,8 +385,8 @@ function addCalculationListenersToRow(row) {
             const issRecolhido = parseFloat(currentRow.querySelector('.iss-recolhido')?.value) || 0;
             const diferencaRecolher = valorDevido - (issCompensado + issRecolhido);
             currentRow.querySelector('.diferenca-recolher').value = diferencaRecolher.toFixed(2);
-
-            // Calcula a diferença atualizada, juros de mora e multa de mora
+			
+			// Calcula a diferença atualizada, juros de mora e multa de mora
             const periodoApuracao = currentRow.querySelector('input[name="periodo-apuracao"]').value;
             const diferencaAtualizada = applyIPCA(diferencaRecolher, periodoApuracao);
             currentRow.querySelector('.diferenca-atualizada').value = diferencaAtualizada.toFixed(2);
@@ -248,7 +432,7 @@ function addNewPeriodRow() {
     row.innerHTML = `
         <td><input type="text" name="periodo-apuracao" value="${currentPeriod}" disabled></td>
         <td><input type="text" name="item-ctiss" value="${itemCTISS}" disabled></td>
-        <td><input type="number" name="base-calculo-declarada" class="base-calculo-declarada" step="0.01" value="${baseCalculoDeclarada}"></td>
+        <td><input type="number" name="base-calculo-declarada" class="base-calculo-declarada" step="0.01" value="${baseCalculoDeclarada}" disabled></td>
         <td>
             <select name="ctiss-apurado" class="ctiss-apurado">
                 <option value=""></option>
@@ -299,7 +483,7 @@ function addSamePeriodFunctionalityToRow(row) {
             newRow.innerHTML = `
                 <td><input type="text" name="periodo-apuracao" value="${period}" disabled></td>
                 <td><input type="text" name="item-ctiss" disabled></td>
-                <td><input type="number" class="base-calculo-declarada" step="0.01"></td>
+                <td><input type="number" class="base-calculo-declarada" step="0.01" disabled></td>
                 <td>
                     <select class="ctiss-apurado">
                         <option value=""></option>
@@ -419,9 +603,11 @@ function generateCTISS() {
 
 // Função para gerar valores aleatórios entre 1000 e 10000
 function generateBaseCalculo() {
-    return (Math.random() * 9000 + 1000).toFixed(2);  // Gera um número entre 1000 e 10000
+    return (Math.random() * 1000).toFixed(2);  // Gera um número entre 1000 e 10000
 }
 
 // Inicializa o botão de adicionar linha
 document.getElementById('add-row').addEventListener('click', addNewPeriodRow);
 
+// Associando o botão "Iniciar Simulação" à função iniciarSimulacao
+document.getElementById('iniciar-simulacao').addEventListener('click', iniciarSimulacao);

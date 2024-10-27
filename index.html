@@ -5,13 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quadro de Levantamento Fiscal</title>
     <link rel="stylesheet" href="css/styles.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/style.css">
 </head>
 <body>
     <div class="container">
         <h2>Simulação - Quadro de Levantamento Fiscal - ISS</h2>
         <h3 class="subtitle">Quadro Geral Resumido</h3>
+        <div class="period-inputs-container">
+            <div class="period-inputs">
+                <div class="input-group">
+                    <label for="periodo-apuracao-inicial">Período de Apuração Inicial</label>
+                    <input type="text" id="periodo-apuracao-inicial" name="periodo-apuracao-inicial" placeholder="MM/AAAA" maxlength="7">
+                </div>
+                <div class="input-group">
+                    <label for="periodo-apuracao-final">Período de Apuração Final</label>
+                    <input type="text" id="periodo-apuracao-final" name="periodo-apuracao-final" placeholder="MM/AAAA" maxlength="7">
+                </div>
+            </div>
+            <button id="iniciar-simulacao">Iniciar Simulação</button>
+        </div>
+
         <table>
             <thead>
                 <tr>
@@ -55,15 +70,40 @@
                 <tr id="total-row">
                     <td colspan="14" style="text-align: right; font-weight: bold;">Total:</td>
                     <td><input type="number" id="total-diferenca-atualizada" disabled value="0.00"></td>
-                    <td><input type="number" id="total-juros-mora" disabled value="0.00"></td>
                     <td><input type="number" id="total-multa-mora" disabled value="0.00"></td>
+                    <td><input type="number" id="total-juros-mora" disabled value="0.00"></td>
                     <td><input type="number" id="total-dif-total-recolher" disabled value="0.00"></td>
                 </tr>
             </tfoot>
         </table>
-        <button id="add-row">Adicionar Linha à Simulação</button>
+        <button id="add-row" style="display: none;">Adicionar Linha à Simulação</button>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/plugins/monthSelect/index.js"></script>
     <script src="js/script.js"></script>
+    <script>
+        // Configuração do Flatpickr para selecionar apenas mês e ano
+        document.addEventListener("DOMContentLoaded", function() {
+            flatpickr("#periodo-apuracao-inicial", {
+                plugins: [
+                    new monthSelectPlugin({
+                        shorthand: true,
+                        dateFormat: "m/Y",
+                        altFormat: "F Y"
+                    })
+                ]
+            });
+            flatpickr("#periodo-apuracao-final", {
+                plugins: [
+                    new monthSelectPlugin({
+                        shorthand: true,
+                        dateFormat: "m/Y",
+                        altFormat: "F Y"
+                    })
+                ]
+            });
+        });
+    </script>
 </body>
 </html>
